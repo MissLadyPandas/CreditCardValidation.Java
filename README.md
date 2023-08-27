@@ -1,4 +1,4 @@
-**6.31 (FINANCIAL: CREDIT CARD NUMBER VALIDATION) Credit card numbers follow certain patterns. A credit card number must have between 13 and 16 digits. It must start with
+6.31 (FINANCIAL: CREDIT CARD NUMBER VALIDATION) Credit card numbers follow certain patterns. A credit card number must have between 13 and 16 digits. It must start with
 
 4 for Visa cards
 
