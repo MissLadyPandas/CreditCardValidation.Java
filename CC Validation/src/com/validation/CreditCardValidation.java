@@ -1,51 +1,81 @@
+
 package com.validation;
 
 import java.util.Scanner;
 
 public class CreditCardValidation {
-
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter a credit card number as a long integer: ");
-        long creditCardNumber = scanner.nextLong();
-        System.out.println(creditCardNumber + (isValid(creditCardNumber) ? " is valid" : " is invalid"));
+    	// use scanner to get user input
+        Scanner input = new Scanner(System.in); 
+
+        // ask user for cc number
+        System.out.print("Enter a valid credit card number: ");
+        long number = input.nextLong();
+
+        // print if cc is valid or not
+        System.out.println(number + " is " + (isValid(number) ? "a valid cc #." : "a invalid cc #."));
     }
 
-    /** Return true if the card number is valid */
+    // Check if the credit card number is valid or not
     public static boolean isValid(long number) {
-        return (getSize(number) >= 13 && getSize(number) <= 16) && 
-               (prefixMatched(number, 4) || 
-                prefixMatched(number, 5) || 
-                prefixMatched(number, 37) || 
-                prefixMatched(number, 6)) &&
-               ((sumOfDoubleEvenPlace(number) + sumOfOddPlace(number)) % 10 == 0);
+        return rangeSize(number) && hasValidPrefix(number) && hasValidSum(number);
     }
 
-    /** Double every second digit from right to left and add them. */
+    // get the result from step 2, calculate the sum of even-place numbers after doubling them.
     public static int sumOfDoubleEvenPlace(long number) {
         int sum = 0;
-        String num = Long.toString(number);
-        for (int i = num.length() - 2; i >= 0; i -= 2) {
-            sum += getDigit(Integer.parseInt(num.charAt(i) + "") * 2);
+        String numStr = Long.toString(number);
+        for (int i = numStr.length() - 2; i >= 0; i -= 2) {
+            sum += getDigit(Character.getNumericValue(numStr.charAt(i)) * 2);
         }
         return sum;
     }
 
-    /**
-     * If a number is a single digit return it, otherwise, 
-     * return the sum of the two digits 
-     */
+    // Return number if single digit; else, return the sum of its digits.
     public static int getDigit(int number) {
-        if (number < 10) {
-            return number;
-        } else {
-            int firstDigit = number % 10;
-            int secondDigit = number / 10;
-            return firstDigit + secondDigit;
-        }
+        return number <= 9 ? number : number / 10 + number % 10;
     }
 
-    /** Return sum of odd-place digits in the number */
+    // Sum of odd-place numbers.
     public static int sumOfOddPlace(long number) {
         int sum = 0;
-        String num = Long.toString(number);
+        String numStr = Long.toString(number);
+        for (int i = numStr.length() - 1; i >= 0; i -= 2) {
+            sum += Character.getNumericValue(numStr.charAt(i));
+        }
+        return sum;
+    }
+
+    // verify the starting numbers of the credit card
+    public static boolean hasValidPrefix(long number) {
+        int[] validPrefixes = {4, 5, 37, 6};
+        for (int prefix : validPrefixes) {
+            if (getPrefix(number, String.valueOf(prefix).length()) == prefix) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Check if card number input range is between 13 and 16.
+    public static boolean rangeSize(long number) {
+        int size = getSize(number);
+        return size >= 13 && size <= 16;
+    }
+
+    // Get the length of the number.
+    public static int getSize(long number) {
+        return Long.toString(number).length();
+    }
+
+    // Get the first k digits of the number.
+    public static long getPrefix(long number, int k) {
+        String numStr = Long.toString(number);
+        return Long.parseLong(numStr.substring(0, k));
+    }
+
+    // Check if the total sum of numbers is valid.
+    public static boolean hasValidSum(long number) {
+        return (sumOfDoubleEvenPlace(number) + sumOfOddPlace(number)) % 10 == 0;
+    }
+}
